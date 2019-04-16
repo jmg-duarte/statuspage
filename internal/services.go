@@ -61,3 +61,11 @@ func (s Services) FetchServices(brief bool, interval time.Duration) {
 		time.Sleep(interval)
 	}
 }
+
+func (s Services) String() string {
+	b, err := json.MarshalIndent(s, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(b)
+}
