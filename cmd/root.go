@@ -24,7 +24,6 @@ import (
 	"fmt"
 	"github.com/jmg-duarte/statuspage/internal"
 	"github.com/spf13/cast"
-	"log"
 	"os"
 	"time"
 
@@ -47,7 +46,6 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "statuspage",
 	Short: "A CLI tool to query statuspage.io pages",
-	Long:  ``,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -109,5 +107,4 @@ func loadServices() {
 		}
 		services.Add(s)
 	}
-	log.Println(services)
 }
