@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 
 	injson "github.com/jmg-duarte/statuspage/internal/json"
 )
@@ -49,5 +50,14 @@ func (s Services) PollServices(brief bool) {
 		} else {
 			log.Printf("%s:\n%s", service.Name, summary.FullStatus("\t", "\n"))
 		}
+	}
+}
+
+func (s Services) FetchServices(brief bool, interval time.Duration) {
+	wait := interval / time.Second
+	for {
+		s.PollServices(brief)
+		log.Printf("Waiting for %d seconds...", wait)
+		time.Sleep(interval)
 	}
 }

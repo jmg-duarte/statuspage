@@ -26,6 +26,7 @@ import (
 	"github.com/spf13/cast"
 	"log"
 	"os"
+	"time"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -36,9 +37,10 @@ var (
 	cfgFile  string
 	services internal.Services
 
-	only    string
-	exclude string
-	brief   bool
+	only     string
+	exclude  string
+	brief    bool
+	interval time.Duration
 )
 
 // rootCmd represents the base command when called without any subcommands
