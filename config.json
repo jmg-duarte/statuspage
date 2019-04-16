@@ -1,0 +1,15 @@
+{
+  "services": [
+    {
+      "id" : "github",
+      "name" : "GitHub",
+      "endpoint" : "https://kctbh9vrtdwd.statuspage.io/api/v2/"
+    },
+    {
+      "id" : "bitbucket",
+      "name" : "BitBucket",
+      "endpoint" : "https://bqlf8qjztdtr.statuspage.io/api/v2/"
+    }
+  ],
+  "output": "./out.json"
+}
