@@ -16,14 +16,14 @@ func (s Summary) BriefStatus() string {
 	return s.Status.Description
 }
 
-func (s Summary) FullStatus() string {
+func (s Summary) FullStatus(prefix, separator string) string {
 	var status strings.Builder
 	for _, component := range s.Components {
-		status.Write([]byte("\t"))
+		status.Write([]byte(prefix))
 		status.Write([]byte(component.Name))
 		status.Write([]byte(": "))
 		status.Write([]byte(component.Status))
-		status.Write([]byte("\n"))
+		status.Write([]byte(separator))
 	}
 	return status.String()
 }

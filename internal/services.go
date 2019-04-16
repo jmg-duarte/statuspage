@@ -47,7 +47,7 @@ func (s Services) PollServices(brief bool) {
 		if brief {
 			log.Printf("%s: %s", service.Name, summary.BriefStatus())
 		} else {
-			log.Printf("%s:\n%s", service.Name, summary.FullStatus())
+			log.Printf("%s:\n%s", service.Name, summary.FullStatus("\t", "\n"))
 		}
 	}
 }
