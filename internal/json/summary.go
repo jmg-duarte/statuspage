@@ -16,6 +16,14 @@ func (s Summary) BriefStatus() string {
 	return s.Status.Description
 }
 
+func (s Summary) ComponentsStatus() map[string]string {
+	cs := make(map[string]string)
+	for _, component := range s.Components {
+		cs[component.Name] = component.Status
+	}
+	return cs
+}
+
 func (s Summary) FullStatus(prefix, separator string) string {
 	var status strings.Builder
 	for _, component := range s.Components {
