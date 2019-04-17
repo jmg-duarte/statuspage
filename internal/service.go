@@ -12,8 +12,8 @@ type Service struct {
 	History  `json:"history,omitempty"`
 }
 
-func NewService(service map[string]string) Service {
-	return Service{
+func NewService(service map[string]string) *Service {
+	return &Service{
 		Name:     service["name"],
 		Endpoint: service["endpoint"],
 		History:  make(History),
@@ -21,13 +21,7 @@ func NewService(service map[string]string) Service {
 }
 
 func (s Service) String() string {
-	var res struct {
-		Name     string `json:"name"`
-		Endpoint string `json:"endpoint"`
-	}
-	res.Name = s.Name
-	res.Endpoint = s.Endpoint
-	b, err := json.MarshalIndent(&res, "", "\t")
+	b, err := json.MarshalIndent(s, "", "\t")
 	if err != nil {
 		log.Fatal(err)
 	}
