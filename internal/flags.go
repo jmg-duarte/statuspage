@@ -7,6 +7,7 @@ type set map[string]struct{}
 func ValidateFilterFlags(only, exclude string, services Services) Services {
 	filteredServices := make(Services)
 	if only != "" {
+		// If only flag is set
 		for _, str := range ParseFlag(only) {
 			filteredServices[str] = services[str]
 		}
