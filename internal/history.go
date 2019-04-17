@@ -1,9 +1,13 @@
 package internal
 
-import "time"
+import (
+	"time"
+)
 
-type History map[time.Duration]map[string]string
+type History map[time.Time]map[string]string
 
-func (h *History) AddEntry(time time.Duration, statuses map[string]string) {
+func (h *History) AddEntry(time time.Time, statuses map[string]string) {
 	(*h)[time] = statuses
 }
+
+type ServiceHistory map[string]History
