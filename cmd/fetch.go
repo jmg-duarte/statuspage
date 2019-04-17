@@ -33,7 +33,7 @@ var fetchCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		internal.ValidateFilterFlags(only, exclude, services).FetchServices(brief, interval)
+		internal.ValidateFilterFlags(only, exclude, services).FetchServices(brief, interval, fWriter)
 	},
 }
 

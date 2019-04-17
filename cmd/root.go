@@ -21,9 +21,13 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/jmg-duarte/statuspage/internal"
 	"github.com/spf13/cast"
+	"io"
+	"io/ioutil"
+	"log"
 	"os"
 	"time"
 
@@ -40,6 +44,8 @@ var (
 	exclude  string
 	brief    bool
 	interval time.Duration
+
+	fWriter io.Writer
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -58,7 +64,7 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig, loadServices)
+	cobra.OnInitialize(initConfig, loadConfig, loadLocalStorage)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.statuspage.yaml)")
 }
 
@@ -89,11 +95,10 @@ func initConfig() {
 	}
 }
 
-func loadServices() {
+func loadConfig() {
 	res := viper.Get("services")
 	if res == nil {
-		fmt.Println("\"services\" not defined in the config file")
-		os.Exit(1)
+		log.Fatal("\"services\" not defined in the config file")
 	}
 
 	services = make(internal.Services)
@@ -106,5 +111,40 @@ func loadServices() {
 			os.Exit(1)
 		}
 		services.Add(s)
+	}
+}
+
+func loadLocalStorage() {
+	file := viper.GetString("output")
+	if file == "" {
+		log.Fatal("output path cannot be null/empty")
+	}
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		// If the file doesn't exist, create it
+		fWriter, err = os.OpenFile(file, os.O_CREATE|os.O_RDWR|os.O_EXCL, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		// If the file exists try and read from it
+		fWriter, err = os.OpenFile(file, os.O_RDWR, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+		b, err := ioutil.ReadFile(file)
+		if err != nil {
+			// If there was an error reading the file, exit
+			log.Fatal(err)
+		}
+		var sHist internal.ServiceHistory
+		err = json.Unmarshal(b, &sHist)
+		if err != nil {
+			// If there was an error parsing it, exit
+			log.Fatal(err)
+		}
+		// No history yet
+		for id, service := range services {
+			service.History = sHist[id]
+		}
 	}
 }

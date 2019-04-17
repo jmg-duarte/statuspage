@@ -23,6 +23,7 @@ package cmd
 import (
 	"github.com/jmg-duarte/statuspage/internal"
 	"github.com/spf13/cobra"
+	"log"
 )
 
 // pollCmd represents the poll command
@@ -31,7 +32,9 @@ var pollCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		internal.ValidateFilterFlags(only, exclude, services).PollServices(brief)
+		servicesMap := internal.ValidateFilterFlags(only, exclude, services)
+		servicesMap.PollServices(brief, fWriter)
+		log.Println(servicesMap.GetServicesHistory())
 	},
 }
 
