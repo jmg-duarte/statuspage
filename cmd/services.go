@@ -21,17 +21,18 @@
 package cmd
 
 import (
-	"log"
-
+	"fmt"
 	"github.com/spf13/cobra"
 )
 
 // servicesCmd represents the services command
 var servicesCmd = &cobra.Command{
 	Use:   "services",
-	Short: "Show all available services",
+	Short: "Outputs all services defined in the configuration file and their respective endpoint",
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Println(services)
+		for id, service := range services {
+			fmt.Printf("[%s - %s] %s\n", id, service.Name, service.Endpoint)
+		}
 	},
 }
 

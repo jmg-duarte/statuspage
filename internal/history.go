@@ -6,10 +6,12 @@ import (
 
 type History map[time.Time]map[string]string
 
+// Add a new status entry to the History
 func (h *History) AddEntry(time time.Time, statuses map[string]string) {
 	(*h)[time] = statuses
 }
 
+// Returns the History in a CSV 2D array
 func (h History) CSV() [][]string {
 	var currentRecord []string
 	var fields []string
@@ -45,6 +47,17 @@ func (h History) CSV() [][]string {
 		currentRecordIdx++
 	}
 	return records
+}
+
+// Returns the percentage of components that were operational at a given time
+func (h History) ComponentStatusSummary(time time.Time) float64 {
+	operational := 0.0
+	for _, status := range h[time] {
+		if status == "operational" {
+			operational++
+		}
+	}
+	return (operational / float64(len(h[time]))) * 100.0
 }
 
 type ServiceHistory map[string]History

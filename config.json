@@ -1,14 +1,24 @@
 {
   "services": [
     {
-      "id" : "github",
-      "name" : "GitHub",
-      "endpoint" : "https://kctbh9vrtdwd.statuspage.io/api/v2/"
+      "id": "github",
+      "name": "GitHub",
+      "endpoint": "https://kctbh9vrtdwd.statuspage.io/api/v2/"
     },
     {
-      "id" : "bitbucket",
-      "name" : "BitBucket",
-      "endpoint" : "https://bqlf8qjztdtr.statuspage.io/api/v2/"
+      "id": "bitbucket",
+      "name": "BitBucket",
+      "endpoint": "https://bqlf8qjztdtr.statuspage.io/api/v2/"
+    },
+    {
+      "id": "reddit",
+      "name": "Reddit",
+      "endpoint": "https://2kbc0d48tv3j.statuspage.io/api/v2/"
+    },
+    {
+      "id": "canary",
+      "name": "Canary",
+      "endpoint": "https://jfhnkhllbpdl.statuspage.io/api/v2/"
     }
   ],
   "output": "./out.json",

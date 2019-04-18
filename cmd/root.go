@@ -22,12 +22,13 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/jmg-duarte/statuspage/internal"
-	"github.com/jmg-duarte/statuspage/internal/format"
-	"github.com/spf13/cast"
 	"log"
 	"os"
 	"time"
+
+	"github.com/jmg-duarte/statuspage/internal"
+	"github.com/jmg-duarte/statuspage/internal/format"
+	"github.com/spf13/cast"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -64,7 +65,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig, loadConfig, loadLocalStorage)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.statuspage.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.statuspage)")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -138,7 +139,9 @@ func loadLocalStorage() {
 		} else {
 			// No history yet
 			for id, service := range services {
-				service.History = sHist[id]
+				if sHist[id] != nil {
+					service.History = sHist[id]
+				}
 			}
 		}
 	}

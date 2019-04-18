@@ -30,8 +30,7 @@ import (
 // pollCmd represents the poll command
 var pollCmd = &cobra.Command{
 	Use:   "poll",
-	Short: "",
-	Long:  ``,
+	Short: "Retrieves the status from of all configured services",
 	Run: func(cmd *cobra.Command, args []string) {
 		localStorage, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
@@ -48,7 +47,7 @@ var pollCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(pollCmd)
 
-	pollCmd.Flags().StringVarP(&only, "only", "o", "", "--only takes precendence over --exclude")
-	pollCmd.Flags().StringVarP(&exclude, "exclude", "e", "", "")
-	pollCmd.Flags().BoolVarP(&brief, "brief", "b", false, "")
+	pollCmd.Flags().StringVarP(&only, "only", "o", "", "Only poll the given services (separated by commas), takes precedence over --exclude")
+	pollCmd.Flags().StringVarP(&exclude, "exclude", "e", "", "Exclude the given services (separated by commas) from being polled")
+	pollCmd.Flags().BoolVarP(&brief, "brief", "b", false, "Shows only a brief overview of the results")
 }

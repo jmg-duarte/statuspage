@@ -33,7 +33,7 @@ import (
 // backupCmd represents the backup command
 var backupCmd = &cobra.Command{
 	Use:   "backup",
-	Short: "Backup your local storage to another file",
+	Short: "Takes an argument (path with the file name) and saves the currect local storage",
 
 	Run: func(cmd *cobra.Command, args []string) {
 		var backupPath string
@@ -78,5 +78,5 @@ var backupCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(backupCmd)
 
-	backupCmd.Flags().StringVarP(&fileFormat, "fileFormat", "f", "", "")
+	backupCmd.Flags().StringVarP(&fileFormat, "format", "f", "", "Supported values are \"json\" and \"csv\"")
 }

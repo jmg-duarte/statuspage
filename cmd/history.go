@@ -30,7 +30,7 @@ import (
 // historyCmd represents the history command
 var historyCmd = &cobra.Command{
 	Use:   "history",
-	Short: "Show service status history",
+	Short: "Outputs all the data from the local storage",
 	Run: func(cmd *cobra.Command, args []string) {
 		servicesMap := internal.ValidateFilterFlags(only, exclude, services)
 		b, err := json.MarshalIndent(servicesMap.GetServicesHistory(), "", "\t")
@@ -44,6 +44,6 @@ var historyCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(historyCmd)
 
-	historyCmd.Flags().StringVarP(&only, "only", "o", "", "--only takes precendence over --exclude")
-	historyCmd.Flags().StringVarP(&exclude, "exclude", "e", "", "")
+	historyCmd.Flags().StringVarP(&only, "only", "o", "", "Only show the given services (separated by commas), takes precedence over --exclude")
+	historyCmd.Flags().StringVarP(&exclude, "exclude", "e", "", "Exclude the given services (separated by commas) from being shown")
 }

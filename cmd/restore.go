@@ -36,7 +36,7 @@ import (
 // restoreCmd represents the restore command
 var restoreCmd = &cobra.Command{
 	Use:   "restore",
-	Short: "A brief description of your command",
+	Short: "Takes an argument (path with the file name) and restores the data in the file into current local storage",
 	Run: func(cmd *cobra.Command, args []string) {
 		var restorePath string
 		if len(args) > 0 {
@@ -66,6 +66,12 @@ var restoreCmd = &cobra.Command{
 				}
 			}
 		} else {
+			for id := range services {
+				_, ok := sHist[id]
+				if !ok {
+					delete(services, id)
+				}
+			}
 			for service, history := range sHist {
 				services[service].History = history
 			}
@@ -85,14 +91,6 @@ var restoreCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(restoreCmd)
-	restoreCmd.Flags().BoolVarP(&merge, "merge", "m", false, "")
-	// Here you will define your flags and configuration settings.
+	restoreCmd.Flags().BoolVarP(&merge, "merge", "m", false, "Allows the program to merge the backup with current local storage")
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// restoreCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// restoreCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
