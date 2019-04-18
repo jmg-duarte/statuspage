@@ -22,6 +22,9 @@ package cmd
 
 import (
 	"github.com/jmg-duarte/statuspage/internal"
+	"io"
+	"log"
+	"os"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -33,7 +36,13 @@ var fetchCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		internal.ValidateFilterFlags(only, exclude, services).FetchServices(brief, interval, fWriter)
+		var localStorage io.WriteSeeker
+		localStorage, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+		servicesMap := internal.ValidateFilterFlags(only, exclude, services)
+		servicesMap.FetchServices(brief, interval, localStorage)
 	},
 }
 

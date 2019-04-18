@@ -22,35 +22,61 @@ package cmd
 
 import (
 	"fmt"
-
+	"github.com/jmg-duarte/statuspage/internal/format"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"log"
+	"os"
+	"strings"
 )
 
 // backupCmd represents the backup command
 var backupCmd = &cobra.Command{
 	Use:   "backup",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Backup your local storage to another file",
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("backup called")
+		var backupPath string
+		if len(args) > 0 {
+			backupPath = args[0]
+		} else {
+			backupPath = viper.GetString("backup_location")
+		}
+
+		if backupPath == "" {
+			log.Fatal(fmt.Errorf("backup location not defined"))
+		}
+
+		if _, err := os.Stat(backupPath); os.IsNotExist(err) {
+			// If the file doesn't exist, create it
+			_, err = os.OpenFile(backupPath, os.O_CREATE|os.O_RDWR|os.O_EXCL, 0644)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		fBackup, err := os.OpenFile(backupPath, os.O_RDWR, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+		switch strings.ToLower(fileFormat) {
+		case "txt":
+			format.NewWriter(fBackup, format.TXT)
+		case "csv":
+			w := format.NewWriter(fBackup, format.CSV)
+			for serviceId, history := range services.GetServicesHistory() {
+				w.Write([][]string{{fmt.Sprintf("[%s]", serviceId)}})
+				w.Write(history.CSV())
+			}
+		default:
+			format.NewWriter(fBackup, format.JSON).Write(services.GetServicesHistory())
+		}
 	},
+	Args: cobra.MaximumNArgs(1),
 }
 
 func init() {
 	rootCmd.AddCommand(backupCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// backupCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// backupCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	backupCmd.Flags().StringVarP(&fileFormat, "fileFormat", "f", "", "")
 }

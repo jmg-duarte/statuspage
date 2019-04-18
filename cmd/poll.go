@@ -24,6 +24,7 @@ import (
 	"github.com/jmg-duarte/statuspage/internal"
 	"github.com/spf13/cobra"
 	"log"
+	"os"
 )
 
 // pollCmd represents the poll command
@@ -32,9 +33,15 @@ var pollCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		localStorage, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
 		servicesMap := internal.ValidateFilterFlags(only, exclude, services)
-		servicesMap.PollServices(brief, fWriter)
-		log.Println(servicesMap.GetServicesHistory())
+		err = servicesMap.PollServices(brief, localStorage)
+		if err != nil {
+			log.Fatal(err)
+		}
 	},
 }
 

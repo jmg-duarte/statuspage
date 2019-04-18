@@ -21,7 +21,7 @@ func (s *Services) Add(serv map[string]string) {
 	}
 }
 
-func (s Services) PollServices(brief bool, writer io.Writer) {
+func (s Services) PollServices(brief bool, writer io.WriteSeeker) error {
 	for _, service := range s {
 		resp, err := http.Get(service.Endpoint + injson.SummaryJson)
 		if err != nil {
@@ -56,20 +56,29 @@ func (s Services) PollServices(brief bool, writer io.Writer) {
 		// Add entry to history
 		service.History.AddEntry(time.Now().UTC(), summary.ComponentsStatus())
 	}
+
+	_, err := writer.Seek(0, io.SeekStart)
+	if err != nil {
+		return err
+	}
 	b, err := json.MarshalIndent(s.GetServicesHistory(), "", "\t")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	_, err = writer.Write(b)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+	return nil
 }
 
-func (s Services) FetchServices(brief bool, interval time.Duration, writer io.Writer) {
+func (s Services) FetchServices(brief bool, interval time.Duration, writer io.WriteSeeker) {
 	wait := interval / time.Second
 	for {
-		s.PollServices(brief, writer)
+		err := s.PollServices(brief, writer)
+		if err != nil {
+			log.Println(err)
+		}
 		log.Printf("Waiting for %d seconds...", wait)
 		time.Sleep(interval)
 	}

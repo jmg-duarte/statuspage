@@ -21,12 +21,10 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/jmg-duarte/statuspage/internal"
+	"github.com/jmg-duarte/statuspage/internal/format"
 	"github.com/spf13/cast"
-	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -38,14 +36,15 @@ import (
 
 var (
 	cfgFile  string
+	file     string
 	services internal.Services
 
-	only     string
-	exclude  string
-	brief    bool
-	interval time.Duration
-
-	fWriter io.Writer
+	only       string
+	exclude    string
+	fileFormat string
+	brief      bool
+	merge      bool
+	interval   time.Duration
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -115,36 +114,32 @@ func loadConfig() {
 }
 
 func loadLocalStorage() {
-	file := viper.GetString("output")
+	file = viper.GetString("output")
 	if file == "" {
 		log.Fatal("output path cannot be null/empty")
 	}
 	if _, err := os.Stat(file); os.IsNotExist(err) {
 		// If the file doesn't exist, create it
-		fWriter, err = os.OpenFile(file, os.O_CREATE|os.O_RDWR|os.O_EXCL, 0644)
+		_, err := os.OpenFile(file, os.O_CREATE|os.O_RDONLY|os.O_EXCL, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}
 	} else {
 		// If the file exists try and read from it
-		fWriter, err = os.OpenFile(file, os.O_RDWR, 0644)
+		localStorageR, err := os.OpenFile(file, os.O_RDONLY, 0644)
 		if err != nil {
-			log.Fatal(err)
-		}
-		b, err := ioutil.ReadFile(file)
-		if err != nil {
-			// If there was an error reading the file, exit
 			log.Fatal(err)
 		}
 		var sHist internal.ServiceHistory
-		err = json.Unmarshal(b, &sHist)
+		err = format.NewReader(localStorageR, format.JSON).Read(&sHist)
 		if err != nil {
-			// If there was an error parsing it, exit
-			log.Fatal(err)
-		}
-		// No history yet
-		for id, service := range services {
-			service.History = sHist[id]
+			log.Println(err)
+			log.Println("continuing")
+		} else {
+			// No history yet
+			for id, service := range services {
+				service.History = sHist[id]
+			}
 		}
 	}
 }
