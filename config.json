@@ -11,5 +11,6 @@
       "endpoint" : "https://bqlf8qjztdtr.statuspage.io/api/v2/"
     }
   ],
-  "output": "./out.json"
+  "output": "./out.json",
+  "backup_location": "./backup.json"
 }
